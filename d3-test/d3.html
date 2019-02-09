@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+	<head>
+		<title>Hello World</title>
+	</head>
+
+	<body>
+		<script src="https://d3js.org/d3.v5.min.js"></script>
+		<script src="hello.js"></script>
+		<script>
+			//this will be visible in the browser inspector log
+			d3.csv("curpos.csv").then(function(data){
+				console.log(data[0]);
+			});
+		</script>
+	</body>
+</html>
