@@ -1,7 +1,7 @@
 //define some constants
 var barHeight = 5;
 var barSpacing = 2;
-var maxWidth = 1000;
+var maxWidth = 600;
 
 //read and use csv data
 d3.csv("curpos.csv").then(function(data){
@@ -15,6 +15,13 @@ d3.csv("curpos.csv").then(function(data){
     })
     .attr("id", "graph");
 
+  var xScale = d3.scaleLinear()
+    .domain([d3.min(data, function(d) {
+      return d["percent position"]
+    }), d3.max(data, function(d) {
+      return d["percent position"]
+    })])
+    .range([1, maxWidth]);
 
   var bars = d3.select("#graph")
     .selectAll("rect")
@@ -26,7 +33,7 @@ d3.csv("curpos.csv").then(function(data){
       return (barHeight*i + barSpacing*i);
     })
     .attr("width", function(d, i) {
-      return d["percent position"]*100
+      return xScale(d["percent position"])
     })
     .attr("height", barHeight)
     .attr("fill", "steelblue");
