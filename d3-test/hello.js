@@ -4,28 +4,29 @@ var barSpacing = 2;
 var maxWidth = 600;
 
 //read and use csv data
-d3.csv("curpos.csv").then(function(data){
+d3.csv("curpos.csv").then(function(curpos){
   //create svg canvas
-  //equivalent to <svg id="graph" width="760" height="100"></svg>
   d3.select("body").append("svg")
     .attr("width", maxWidth)
     .attr("height", function(){
-      var items = data.length + 1;
+      var items = curpos.length + 1;
       return (items*barHeight + items*barSpacing);
     })
-    .attr("id", "graph");
+    .attr("id", "graph")
+    .append("g");
 
   var xScale = d3.scaleLinear()
-    .domain([d3.min(data, function(d) {
+    .domain([d3.min(curpos, function(d) {
       return d["percent position"]
-    }), d3.max(data, function(d) {
+    }), d3.max(curpos, function(d) {
       return d["percent position"]
     })])
+    .nice()
     .range([1, maxWidth]);
 
   var bars = d3.select("#graph")
-    .selectAll("rect")
-      .data(data);
+    .selectAll("shortPos")
+      .data(curpos);
 
   bars.enter().append("rect")
     .attr("x", 0)
@@ -38,9 +39,3 @@ d3.csv("curpos.csv").then(function(data){
     .attr("height", barHeight)
     .attr("fill", "steelblue");
 });
-
-/*
-var div = document.createElement("div");
-div.innerHTML = "Printing 'Hello, world!' from javascript.";
-document.body.appendChild(div);
-*/
