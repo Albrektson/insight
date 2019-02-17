@@ -1,19 +1,18 @@
 //define some constants
-var barHeight = 5;
-var barSpacing = 2;
+var barHeight = 15;
+var barSpacing = 1;
 var maxWidth = 600;
+var maxHeight = 1200;
+
+d3.select("body").append("svg")
+  .attr("width", maxWidth)
+  .attr("height", maxHeight)
+  .attr("id", "graph")
+  .append("g");
 
 //read and use csv data
 d3.csv("curpos.csv").then(function(curpos){
   //create svg canvas
-  d3.select("body").append("svg")
-    .attr("width", maxWidth)
-    .attr("height", function(){
-      var items = curpos.length + 1;
-      return (items*barHeight + items*barSpacing);
-    })
-    .attr("id", "graph")
-    .append("g");
 
   var xScale = d3.scaleLinear()
     .domain([d3.min(curpos, function(d) {
@@ -38,4 +37,20 @@ d3.csv("curpos.csv").then(function(curpos){
     })
     .attr("height", barHeight)
     .attr("fill", "steelblue");
+});
+
+d3.csv("pdmr.csv").then(function(trades){
+  var points = d3.select("#graph")
+    .selectAll("trades")
+      .data(trades)
+
+  points.enter().append("circle")
+    .attr("cx", function(d, i){
+      return i
+    })
+    .attr("cy", function(d, i){
+      return i
+    })
+    .attr("r", 2)
+    .attr("fill", "red")
 });
