@@ -1,6 +1,3 @@
-var barSize = 15;
-//var barSpacing = 1;
-
 var width = 800,
     height = 600;
 
@@ -18,8 +15,10 @@ var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr("id", "graph");
 
-var xScale = d3.scaleLinear()
+var xScale = d3.scaleBand()
   .range([margin.left, graphWidth])
+  .round([0.05])
+  .padding(0.1)
 
 var yScale = d3.scaleLog()
   .range([0, (graphHeight/2)])
@@ -30,7 +29,7 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .selectAll("trades")
       .data(trades)
 
-  xScale.domain([0, trades.length]).nice();
+  xScale.domain(trades.map(function (d, i) { return i }));
   yScale.domain(d3.extent(trades, function(d) {
     return +d["Volume"]
   })).nice();
@@ -56,7 +55,7 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
         return (mid - yScale(+d["Volume"]))
       }
     })
-    .attr("width", barSize)
+    .attr("width", xScale.bandwidth())
     .attr("height", function(d) {
       return yScale(+d["Volume"])
     })
