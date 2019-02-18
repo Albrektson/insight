@@ -37,7 +37,13 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
 
   bars.enter().append("rect")
     .attr("class", function(d) {
-      return "bar bar-" + (d.value < 0 ? "negative" : "positive");
+      var type;
+      if (d.Trade == "Avyttring") {
+        type = "negative"
+      } else {
+        type = "positive"
+      }
+      return "bar bar-" + type;
     })
     .attr("x", function(d, i) {
       return xScale(i);
