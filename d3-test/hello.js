@@ -59,7 +59,6 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .attr("height", function(d) {
       return yScale(+d["Volume"])
     })
-    .attr("fill", "steelblue")
     .attr("opacity", 0.95);
 
     var yAxisCall = d3.axisLeft(yScale)
