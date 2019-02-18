@@ -21,7 +21,7 @@ var xScale = d3.scaleBand()
   .padding(0.1)
 
 var yScale = d3.scaleLog()
-  .range([0, (graphHeight/2)])
+  .range([0, graphHeight])
 
 //read and use csv data
 d3.csv("ncc-pdmr.csv").then(function(trades){
@@ -62,8 +62,11 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .attr("opacity", 0.95);
 
     var yAxisCall = d3.axisLeft(yScale)
+      .tickSize(3)
+      .tickPadding(10)  //offset away from axis
     var yAxis = d3.select("#graph").append("g")
       .attr("class", "y-axis")
+      .attr("transform", "translate(" + xScale(0) + "," + 0 + ")")
       .call(yAxisCall)
 /*
     yAxis.append("text")
@@ -72,6 +75,8 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
       .text("Height / Centimeters");
 */
     var xAxisCall = d3.axisBottom(xScale)
+      .tickSize(3)
+      .tickPadding(3)
     var xAxis = d3.select("#graph").append("g")
       .attr("class", "x-axis")
       .attr("transform", "translate(" + 0 + "," + (graphHeight/2) + ")")
