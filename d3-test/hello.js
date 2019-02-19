@@ -1,6 +1,6 @@
 var width = 800,
     height = 600;
-    barOffset = 7;
+    barOffset = 3;
 
 var margin = {top: 20, right: 20, bottom: 20, left: 40},
     graphWidth = width - margin.left - margin.right,
@@ -31,7 +31,38 @@ var yScaleRight = yLinearScale;
 
 
 
+//perform a little scaling hack
+d3.csv("ncc-pdmr.csv").then(function(trades){
+  xScale.domain(trades.map(function (d, i) { return i }));
+})
+
 //read and use csv data
+d3.csv("ncc-curpos.csv").then(function(curpos){
+  var dots = d3.select("#graph")
+    .selectAll("shortPos")
+      .data(curpos);
+
+  //xScale.domain(curpos.map(function (d, i) { return i }));
+  yScaleRight.domain(d3.extent(curpos, function(d) {
+    return +d["percent position"]
+  }));
+
+  dots.enter().append("rect")
+    .attr("class", "bar-short")
+    .attr("x", function(d, i){
+      return xScale(i) + barOffset
+    })
+    .attr("y", function(d, i) {
+      return graphHeight/2;
+    })
+    .attr("width", xScale.bandwidth())
+    .attr("height", function(d){
+      console.log(+d["percent position"])
+      return yScaleRight(+d["percent position"])
+    })
+    .attr("opacity", 1);
+});
+
 d3.csv("ncc-pdmr.csv").then(function(trades){
   var bars = d3.select("#graph")
     .selectAll("trades")
@@ -77,7 +108,6 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .attr("height", function(d) {
       return yScale(+d["Volume"])
     })
-    .attr("opacity", 0.9);
 
     var yAxisCall = d3.axisLeft(yScale)
       .tickSize(3)
@@ -116,30 +146,3 @@ d3.interval(function(){
   useLogScale = !useLogScale;
 }, 1000)
 */
-
-
-d3.csv("ncc-curpos.csv").then(function(curpos){
-  var dots = d3.select("#graph")
-    .selectAll("shortPos")
-      .data(curpos);
-
-  //xScale.domain(curpos.map(function (d, i) { return i }));
-  yScaleRight.domain(d3.extent(curpos, function(d) {
-    return +d["percent position"]
-  }));
-
-  dots.enter().append("rect")
-    .attr("class", "bar-short")
-    .attr("x", function(d, i){
-      return xScale(i) + barOffset
-    })
-    .attr("y", function(d, i) {
-      return graphHeight/2;
-    })
-    .attr("width", xScale.bandwidth())
-    .attr("height", function(d){
-      console.log(+d["percent position"])
-      return yScaleRight(+d["percent position"])
-    })
-    .attr("opacity", 0.4);
-});
