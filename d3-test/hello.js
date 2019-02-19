@@ -1,5 +1,6 @@
 var width = 800,
     height = 600;
+    barOffset = 7;
 
 var margin = {top: 20, right: 20, bottom: 20, left: 40},
     graphWidth = width - margin.left - margin.right,
@@ -18,16 +19,33 @@ var g = svg.append("g")
 var xScale = d3.scaleBand()
   .range([margin.left, graphWidth])
   .round([0.05])
-  .padding(0.1)
+  .padding(0.3)
 
-var yScale = d3.scaleLog()
-  .range([0, graphHeight])
+var useLogScale = true;
+var yLogScale = d3.scaleLog()
+  .range([0, graphHeight/2])
+var yLinearScale = d3.scaleLinear()
+  .range([0, graphHeight/2])
+var yScale = yLogScale;
+var yScaleRight = yLinearScale;
+
+
 
 //read and use csv data
 d3.csv("ncc-pdmr.csv").then(function(trades){
   var bars = d3.select("#graph")
     .selectAll("trades")
       .data(trades)
+
+  /*
+  trades.forEach(function(d){
+    d["Volume"] = +d["Volume"];
+    if (d.Trade == "Avyttring"){
+      d["Volume"]  = -d["Volume"];
+    }
+    console.log(d["Volume"]);
+  })
+  */
 
   xScale.domain(trades.map(function (d, i) { return i }));
   yScale.domain(d3.extent(trades, function(d) {
@@ -59,7 +77,7 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .attr("height", function(d) {
       return yScale(+d["Volume"])
     })
-    .attr("opacity", 0.95);
+    .attr("opacity", 0.9);
 
     var yAxisCall = d3.axisLeft(yScale)
       .tickSize(3)
@@ -81,36 +99,47 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
       .attr("class", "x-axis")
       .attr("transform", "translate(" + 0 + "," + (graphHeight/2) + ")")
       .call(xAxisCall)
-    });
+});
 
 /*
+d3.interval(function(){
+  yScale = useLogScale ? yLogScale : yLinearScale;
+  yScale.domain(d3.extent(trades, function(d) {
+    return +d["Volume"]
+  })).nice();
+  yAxis.call(
+    d3.axisLeft(yScale)
+      .tickSize(3)
+      .tickPadding(10)
+  );
+  bars.attr("height", 1);
+  useLogScale = !useLogScale;
+}, 1000)
+*/
+
+
 d3.csv("ncc-curpos.csv").then(function(curpos){
-  curpos.forEach(function (d) {
-    console.log(d)
-  });
-
-  var xScale = d3.scaleLinear()
-    .domain([d3.min(curpos, function(d) {
-      return d["percent position"]
-    }), d3.max(curpos, function(d) {
-      return d["percent position"]
-    })])
-    .nice()
-    .range([1, width]);
-
   var dots = d3.select("#graph")
     .selectAll("shortPos")
       .data(curpos);
 
+  //xScale.domain(curpos.map(function (d, i) { return i }));
+  yScaleRight.domain(d3.extent(curpos, function(d) {
+    return +d["percent position"]
+  }));
+
   dots.enter().append("rect")
-    .attr("x", 0)
+    .attr("class", "bar-short")
+    .attr("x", function(d, i){
+      return xScale(i) + barOffset
+    })
     .attr("y", function(d, i) {
-      return (barHeight*i + barSpacing*i);
+      return graphHeight/2;
     })
-    .attr("width", function(d, i) {
-      return xScale(d["percent position"])
+    .attr("width", xScale.bandwidth())
+    .attr("height", function(d){
+      console.log(+d["percent position"])
+      return yScaleRight(+d["percent position"])
     })
-    .attr("height", barHeight)
-    .attr("fill", "steelblue");
+    .attr("opacity", 0.4);
 });
-*/
