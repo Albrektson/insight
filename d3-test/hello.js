@@ -21,7 +21,7 @@ var xScale = d3.scaleBand()
   .round([0.05])
   .padding(0.3)
 
-var useLogScale = true;
+//var useLogScale = true;
 var yLogScale = d3.scaleLog()
   .range([0, graphHeight/2])
 var yLinearScale = d3.scaleLinear()

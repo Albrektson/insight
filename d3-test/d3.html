@@ -13,12 +13,13 @@
 
 		.bar-negative {
 		  fill: darkorange;
-			opacity: 0.6;
+			opacity: 1;
 		}
 
 		.bar-short {
-			fill: #cc2f2f;
+			fill: #aa2f2f;
 			opacity: 1;
+			visibility: hidden;
 		}
 
 		.axis text {
@@ -40,6 +41,20 @@
 
 	<body>
 		<script src="https://d3js.org/d3.v5.min.js"></script>
-		<script/ src="hello.js"></script>
+		<script src="hello.js"></script>
+		<script>
+			//another hack
+			function toggleShortVis(){
+				var s = document.getElementsByClassName("bar-short");
+				var outcome = "visible"
+				if (s[0].style.visibility == outcome){
+					outcome = "hidden";
+				}
+				for (i = 0; i < s.length; i++) {
+					s[i].style.visibility = outcome;
+				}
+			};
+		</script>
+		 <button onclick="toggleShortVis()">Toggle Short Sales</button>
 	</body>
 </html>
