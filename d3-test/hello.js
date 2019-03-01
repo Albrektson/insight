@@ -41,20 +41,19 @@ update()
 function update(){
   Promise.all([
     d3.csv("ncc-pdmr.csv"),
-    d3.csv("ncc-curpos.csv"),
     d3.json("curpos.json")
   ]).then(function(data){
     var trades = data[0]
-    //var curpos = data[1]
-    var curpos = data[2]
-
-    //console.log(curpos)
+    var curpos = data[1]
 
     xScale.domain(trades.map(function (d, i) { return i }));
     yScaleRight.domain(d3.extent(curpos, function(d) {
       console.log(+d["position_in_percent"])
       return +d["position_in_percent"]
     }));
+    yScale.domain(d3.extent(trades, function(d) {
+      return +d["Volume"]
+    })).nice();
 
     var bars = d3.select("#graph")
       .append("g")
@@ -67,19 +66,6 @@ function update(){
         .attr("id", "shorts")
         .selectAll("circle")
           .data(curpos);
-
-    //trades.forEach(function(d){
-    //  d["Volume"] = +d["Volume"];
-    //  if (d.Trade == "Avyttring"){
-    //    d["Volume"]  = -d["Volume"];
-    //  }
-    //  console.log(d["Volume"]);
-    //})
-
-    xScale.domain(trades.map(function (d, i) { return i }));
-    yScale.domain(d3.extent(trades, function(d) {
-      return +d["Volume"]
-    })).nice();
 
     bars.enter().append("rect")
       .attr("class", function(d) {
@@ -133,11 +119,6 @@ function update(){
         .attr("class", "y-axis")
         .attr("transform", "translate(" + xScale(0) + "," + 0 + ")")
         .call(yAxisCall)
-
-      //yAxis.append("text")
-      //  .attr("class", "axis-title")
-      //  .attr("transform", "rotate(-90)")
-      //  .text("Height / Centimeters");
 
       var xAxisCall = d3.axisBottom(xScale)
         .tickSize(3)
