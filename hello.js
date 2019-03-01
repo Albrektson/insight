@@ -23,9 +23,9 @@ var xScale = d3.scaleBand()
 
 //var useLogScale = true;
 var yLogScale = d3.scaleLog()
-  .range([0, graphHeight/2])
+  .range([graphHeight/2, 0])
 var yLinearScale = d3.scaleLinear()
-  .range([0, graphHeight/2])
+  .range([graphHeight/2, 0])
 var yScale = yLinearScale;
 var yScaleRight = d3.scaleLinear()
   .range([20, graphHeight/2]);
@@ -85,12 +85,13 @@ function update(){
         if (d.Trade == "Avyttring") {
           return mid
         } else {
-          return (mid - yScale(+d["Volume"]))
+          return (yScale(+d["Volume"]))
         }
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) {
-        return yScale(+d["Volume"])
+        console.log(yScale(0) - yScale(+d["Volume"]))
+        return (yScale(0) - yScale(+d["Volume"]))
       })
 
     shorts.enter().append("rect")
@@ -103,8 +104,6 @@ function update(){
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d){
-        console.log("test")
-        console.log(yScaleRight(+d["position_in_percent"]))
         return yScaleRight(+d["position_in_percent"])
       })
       .attr("opacity", 1);
