@@ -1,5 +1,5 @@
 var width = 800,
-    height = 600;
+    height = 300;
     barOffset = 3;
 
 var margin = {top: 20, right: 20, bottom: 20, left: 40},
@@ -12,23 +12,24 @@ var svg = d3.select("body").append("svg")
   .attr("height", height)
   .attr("id", "canvas");
 
+//create actual graph surface
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr("id", "graph");
 
+//define X axis scale
 var xScale = d3.scaleBand()
   .range([margin.left, graphWidth])
   .round([0.05])
   .padding(0.3)
 
-//var useLogScale = true;
+//define Y axis scale
+var useLogScale = false;
 var yLogScale = d3.scaleLog()
   .range([graphHeight, 0])
 var yLinearScale = d3.scaleLinear()
   .range([graphHeight, 0])
 var yScale = yLinearScale;
-var yScaleRight = d3.scaleLinear()
-  .range([20, graphHeight/2]);
 
 /*
 d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
@@ -36,8 +37,10 @@ d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limi
 })
 */
 
+//draw initial/default graph
 update()
 
+//load data and draw a graph
 function update(){
   Promise.all([
     d3.csv("ncc-pdmr.csv"),
@@ -56,9 +59,6 @@ function update(){
         return val
       }
     })).nice();
-    yScaleRight.domain(d3.extent(curpos, function(d) {
-      return +d["position_in_percent"]
-    }));
 
     //perform joins
     var bars = d3.select("#graph")
