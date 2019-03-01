@@ -97,18 +97,15 @@ function update(){
         return (yScale(0) - yScale(+d["Volume"]))
       })
 
-    shorts.enter().append("rect")
+    shorts.enter().append("circle")
       .attr("class", "bar-short")
-      .attr("x", function(d, i){
-        return xScale(i)
+      .attr("cx", function(d, i){
+        return (xScale(i) + (xScale.bandwidth() / 2))
       })
-      .attr("y", function(d, i) {
+      .attr("cy", function(d, i) {
         return yScale(0);
       })
-      .attr("width", xScale.bandwidth())
-      .attr("height", function(d){
-        return yScaleRight(+d["position_in_percent"])
-      })
+      .attr("r", xScale.bandwidth() / 3)
       .attr("opacity", 1);
 
       bars.exit().remove()
