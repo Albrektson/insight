@@ -32,7 +32,7 @@ var yScaleRight = yLinearScale;
 d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
   console.log(data)
 })
-
+/*
 //perform a little scaling hack
 d3.csv("ncc-pdmr.csv").then(function(trades){
   xScale.domain(trades.map(function (d, i) { return i }));
@@ -69,15 +69,13 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
     .selectAll("trades")
       .data(trades)
 
-  /*
-  trades.forEach(function(d){
-    d["Volume"] = +d["Volume"];
-    if (d.Trade == "Avyttring"){
-      d["Volume"]  = -d["Volume"];
-    }
-    console.log(d["Volume"]);
-  })
-  */
+  //trades.forEach(function(d){
+  //  d["Volume"] = +d["Volume"];
+  //  if (d.Trade == "Avyttring"){
+  //    d["Volume"]  = -d["Volume"];
+  //  }
+  //  console.log(d["Volume"]);
+  //})
 
   xScale.domain(trades.map(function (d, i) { return i }));
   yScale.domain(d3.extent(trades, function(d) {
@@ -117,12 +115,12 @@ d3.csv("ncc-pdmr.csv").then(function(trades){
       .attr("class", "y-axis")
       .attr("transform", "translate(" + xScale(0) + "," + 0 + ")")
       .call(yAxisCall)
-/*
-    yAxis.append("text")
-      .attr("class", "axis-title")
-      .attr("transform", "rotate(-90)")
-      .text("Height / Centimeters");
-*/
+
+    //yAxis.append("text")
+    //  .attr("class", "axis-title")
+    //  .attr("transform", "rotate(-90)")
+    //  .text("Height / Centimeters");
+
     var xAxisCall = d3.axisBottom(xScale)
       .tickSize(3)
       .tickPadding(3)
