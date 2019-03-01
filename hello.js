@@ -23,9 +23,9 @@ var xScale = d3.scaleBand()
 
 //var useLogScale = true;
 var yLogScale = d3.scaleLog()
-  .range([graphHeight/2, 0])
+  .range([graphHeight, 0])
 var yLinearScale = d3.scaleLinear()
-  .range([graphHeight/2, 0])
+  .range([graphHeight, 0])
 var yScale = yLinearScale;
 var yScaleRight = d3.scaleLinear()
   .range([20, graphHeight/2]);
@@ -46,21 +46,26 @@ function update(){
     var trades = data[0]
     var curpos = data[1]
 
+    //set scaling domains
     xScale.domain(trades.map(function (d, i) { return i }));
+    yScale.domain(d3.extent(trades, function(d) {
+      var val = +d.Volume
+      if (d.Trade == "Avyttring") {
+        return -val
+      } else {
+        return val
+      }
+    })).nice();
     yScaleRight.domain(d3.extent(curpos, function(d) {
-      console.log(+d["position_in_percent"])
       return +d["position_in_percent"]
     }));
-    yScale.domain(d3.extent(trades, function(d) {
-      return +d["Volume"]
-    })).nice();
 
+    //perform joins
     var bars = d3.select("#graph")
       .append("g")
         .attr("id", "trades")
         .selectAll("rect")
         .data(trades)
-
     var shorts = d3.select("#graph")
       .append("g")
         .attr("id", "shorts")
@@ -81,16 +86,14 @@ function update(){
         return xScale(i);
       })
       .attr("y", function(d){
-        mid = graphHeight/2
         if (d.Trade == "Avyttring") {
-          return mid
+          return yScale(+d["Volume"])
         } else {
           return (yScale(+d["Volume"]))
         }
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) {
-        console.log(yScale(0) - yScale(+d["Volume"]))
         return (yScale(0) - yScale(+d["Volume"]))
       })
 
@@ -100,7 +103,7 @@ function update(){
         return xScale(i)
       })
       .attr("y", function(d, i) {
-        return graphHeight/2;
+        return yScale(0);
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d){
@@ -124,7 +127,7 @@ function update(){
         .tickPadding(3)
       var xAxis = d3.select("#graph").append("g")
         .attr("class", "x-axis")
-        .attr("transform", "translate(" + 0 + "," + (graphHeight/2) + ")")
+        .attr("transform", "translate(" + 0 + "," + yScale(0) + ")")
         .call(xAxisCall)
   });
 }
