@@ -27,7 +27,8 @@ var yLogScale = d3.scaleLog()
 var yLinearScale = d3.scaleLinear()
   .range([0, graphHeight/2])
 var yScale = yLinearScale;
-var yScaleRight = yLinearScale;
+var yScaleRight = d3.scaleLinear()
+  .range([20, graphHeight/2]);
 
 /*
 d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
@@ -40,12 +41,20 @@ update()
 function update(){
   Promise.all([
     d3.csv("ncc-pdmr.csv"),
-    d3.csv("ncc-curpos.csv")
+    d3.csv("ncc-curpos.csv"),
+    d3.json("curpos.json")
   ]).then(function(data){
     var trades = data[0]
-    var curpos = data[1]
+    //var curpos = data[1]
+    var curpos = data[2]
+
+    //console.log(curpos)
 
     xScale.domain(trades.map(function (d, i) { return i }));
+    yScaleRight.domain(d3.extent(curpos, function(d) {
+      console.log(+d["position_in_percent"])
+      return +d["position_in_percent"]
+    }));
 
     var bars = d3.select("#graph")
       .append("g")
@@ -58,12 +67,6 @@ function update(){
         .attr("id", "shorts")
         .selectAll("circle")
           .data(curpos);
-
-        /*
-        yScaleRight.domain(d3.extent(curpos, function(d) {
-          return +d["percent position"]
-        }));
-        */
 
     //trades.forEach(function(d){
     //  d["Volume"] = +d["Volume"];
@@ -107,14 +110,16 @@ function update(){
     shorts.enter().append("rect")
       .attr("class", "bar-short")
       .attr("x", function(d, i){
-        return xScale(i) + barOffset
+        return xScale(i)
       })
       .attr("y", function(d, i) {
         return graphHeight/2;
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d){
-        return yScaleRight(+d["percent position"])
+        console.log("test")
+        console.log(yScaleRight(+d["position_in_percent"]))
+        return yScaleRight(+d["position_in_percent"])
       })
       .attr("opacity", 1);
 
