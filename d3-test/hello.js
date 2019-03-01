@@ -29,119 +29,117 @@ var yLinearScale = d3.scaleLinear()
 var yScale = yLinearScale;
 var yScaleRight = yLinearScale;
 
+/*
 d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
   console.log(data)
 })
-/*
-//perform a little scaling hack
-d3.csv("ncc-pdmr.csv").then(function(trades){
-  xScale.domain(trades.map(function (d, i) { return i }));
-})
-
-//read and use csv data
-d3.csv("ncc-curpos.csv").then(function(curpos){
-  var dots = d3.select("#graph")
-    .selectAll("shortPos")
-      .data(curpos);
-
-  //xScale.domain(curpos.map(function (d, i) { return i }));
-  yScaleRight.domain(d3.extent(curpos, function(d) {
-    return +d["percent position"]
-  }));
-
-  dots.enter().append("rect")
-    .attr("class", "bar-short")
-    .attr("x", function(d, i){
-      return xScale(i) + barOffset
-    })
-    .attr("y", function(d, i) {
-      return graphHeight/2;
-    })
-    .attr("width", xScale.bandwidth())
-    .attr("height", function(d){
-      return yScaleRight(+d["percent position"])
-    })
-    .attr("opacity", 1);
-});
-
-d3.csv("ncc-pdmr.csv").then(function(trades){
-  var bars = d3.select("#graph")
-    .selectAll("trades")
-      .data(trades)
-
-  //trades.forEach(function(d){
-  //  d["Volume"] = +d["Volume"];
-  //  if (d.Trade == "Avyttring"){
-  //    d["Volume"]  = -d["Volume"];
-  //  }
-  //  console.log(d["Volume"]);
-  //})
-
-  xScale.domain(trades.map(function (d, i) { return i }));
-  yScale.domain(d3.extent(trades, function(d) {
-    return +d["Volume"]
-  })).nice();
-
-  bars.enter().append("rect")
-    .attr("class", function(d) {
-      var type;
-      if (d.Trade == "Avyttring") {
-        type = "negative"
-      } else {
-        type = "positive"
-      }
-      return "bar bar-" + type;
-    })
-    .attr("x", function(d, i) {
-      return xScale(i);
-    })
-    .attr("y", function(d){
-      mid = graphHeight/2
-      if (d.Trade == "Avyttring") {
-        return mid
-      } else {
-        return (mid - yScale(+d["Volume"]))
-      }
-    })
-    .attr("width", xScale.bandwidth())
-    .attr("height", function(d) {
-      return yScale(+d["Volume"])
-    })
-
-    var yAxisCall = d3.axisLeft(yScale)
-      .tickSize(3)
-      .tickPadding(10)  //offset away from axis
-    var yAxis = d3.select("#graph").append("g")
-      .attr("class", "y-axis")
-      .attr("transform", "translate(" + xScale(0) + "," + 0 + ")")
-      .call(yAxisCall)
-
-    //yAxis.append("text")
-    //  .attr("class", "axis-title")
-    //  .attr("transform", "rotate(-90)")
-    //  .text("Height / Centimeters");
-
-    var xAxisCall = d3.axisBottom(xScale)
-      .tickSize(3)
-      .tickPadding(3)
-    var xAxis = d3.select("#graph").append("g")
-      .attr("class", "x-axis")
-      .attr("transform", "translate(" + 0 + "," + (graphHeight/2) + ")")
-      .call(xAxisCall)
-});
-
-/*
-d3.interval(function(){
-  yScale = useLogScale ? yLogScale : yLinearScale;
-  yScale.domain(d3.extent(trades, function(d) {
-    return +d["Volume"]
-  })).nice();
-  yAxis.call(
-    d3.axisLeft(yScale)
-      .tickSize(3)
-      .tickPadding(10)
-  );
-  bars.attr("height", 1);
-  useLogScale = !useLogScale;
-}, 1000)
 */
+
+update()
+
+function update(){
+  Promise.all([
+    d3.csv("ncc-pdmr.csv"),
+    d3.csv("ncc-curpos.csv")
+  ]).then(function(data){
+    var trades = data[0]
+    var curpos = data[1]
+
+    xScale.domain(trades.map(function (d, i) { return i }));
+
+    var bars = d3.select("#graph")
+      .append("g")
+        .attr("id", "trades")
+        .selectAll("rect")
+        .data(trades)
+
+    var shorts = d3.select("#graph")
+      .append("g")
+        .attr("id", "shorts")
+        .selectAll("circle")
+          .data(curpos);
+
+        /*
+        yScaleRight.domain(d3.extent(curpos, function(d) {
+          return +d["percent position"]
+        }));
+        */
+
+    //trades.forEach(function(d){
+    //  d["Volume"] = +d["Volume"];
+    //  if (d.Trade == "Avyttring"){
+    //    d["Volume"]  = -d["Volume"];
+    //  }
+    //  console.log(d["Volume"]);
+    //})
+
+    xScale.domain(trades.map(function (d, i) { return i }));
+    yScale.domain(d3.extent(trades, function(d) {
+      return +d["Volume"]
+    })).nice();
+
+    bars.enter().append("rect")
+      .attr("class", function(d) {
+        var type;
+        if (d.Trade == "Avyttring") {
+          type = "negative"
+        } else {
+          type = "positive"
+        }
+        return "bar bar-" + type;
+      })
+      .attr("x", function(d, i) {
+        return xScale(i);
+      })
+      .attr("y", function(d){
+        mid = graphHeight/2
+        if (d.Trade == "Avyttring") {
+          return mid
+        } else {
+          return (mid - yScale(+d["Volume"]))
+        }
+      })
+      .attr("width", xScale.bandwidth())
+      .attr("height", function(d) {
+        return yScale(+d["Volume"])
+      })
+
+    shorts.enter().append("rect")
+      .attr("class", "bar-short")
+      .attr("x", function(d, i){
+        return xScale(i) + barOffset
+      })
+      .attr("y", function(d, i) {
+        return graphHeight/2;
+      })
+      .attr("width", xScale.bandwidth())
+      .attr("height", function(d){
+        return yScaleRight(+d["percent position"])
+      })
+      .attr("opacity", 1);
+
+      bars.exit().remove()
+      shorts.exit().remove()
+
+      var yAxisCall = d3.axisLeft(yScale)
+        .tickSize(3)
+        .tickPadding(10)  //offset away from axis
+      var yAxis = d3.select("#graph").append("g")
+        .attr("class", "y-axis")
+        .attr("transform", "translate(" + xScale(0) + "," + 0 + ")")
+        .call(yAxisCall)
+
+      //yAxis.append("text")
+      //  .attr("class", "axis-title")
+      //  .attr("transform", "rotate(-90)")
+      //  .text("Height / Centimeters");
+
+      var xAxisCall = d3.axisBottom(xScale)
+        .tickSize(3)
+        .tickPadding(3)
+      var xAxis = d3.select("#graph").append("g")
+        .attr("class", "x-axis")
+        .attr("transform", "translate(" + 0 + "," + (graphHeight/2) + ")")
+        .call(xAxisCall)
+  });
+}
