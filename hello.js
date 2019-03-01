@@ -87,7 +87,7 @@ function update(){
       })
       .attr("y", function(d){
         if (d.Trade == "Avyttring") {
-          return yScale(+d["Volume"])
+          return yScale(0)
         } else {
           return (yScale(+d["Volume"]))
         }
