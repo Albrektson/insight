@@ -26,10 +26,12 @@ var yLogScale = d3.scaleLog()
   .range([0, graphHeight/2])
 var yLinearScale = d3.scaleLinear()
   .range([0, graphHeight/2])
-var yScale = yLogScale;
+var yScale = yLinearScale;
 var yScaleRight = yLinearScale;
 
-
+d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
+  console.log(data)
+})
 
 //perform a little scaling hack
 d3.csv("ncc-pdmr.csv").then(function(trades){
@@ -57,7 +59,6 @@ d3.csv("ncc-curpos.csv").then(function(curpos){
     })
     .attr("width", xScale.bandwidth())
     .attr("height", function(d){
-      console.log(+d["percent position"])
       return yScaleRight(+d["percent position"])
     })
     .attr("opacity", 1);
