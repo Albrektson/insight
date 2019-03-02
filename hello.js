@@ -51,13 +51,13 @@ var tooltip = d3.select("body").append("div")
   .style("opacity", 0);
 
 //draw initial/default graph
-update()
+update("ncc-pdmr.csv", "curpos.json")
 
 //load data and draw a graph
-function update(){
+function update(insightSource, shortSource){
   Promise.all([
-    d3.csv("ncc-pdmr.csv"),
-    d3.json("curpos.json")
+    d3.csv(insightSource),
+    d3.json(shortSource)
   ]).then(function(data){
     var trades = data[0]
     var curpos = data[1]
