@@ -111,7 +111,7 @@ function update(){
       })
 
     shorts.enter().append("circle")
-      .attr("class", "bar-short")
+      .attr("class", "short")
       .attr("cx", function(d, i){
         return (xScale(i) + (xScale.bandwidth() / 2))
       })
