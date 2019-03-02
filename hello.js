@@ -26,6 +26,10 @@ var g2 = svg2.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr("id", "shortGraph");
 
+var tooltip = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
 //define X axis scale
 var xScale = d3.scaleBand()
   .range([margin.left, graphWidth])
@@ -40,10 +44,6 @@ var yLinearScale = d3.scaleLinear()
   .range([graphHeight, 0])
 var yScale = yLinearScale;
 
-
-var tooltip = d3.select("body").append("div")
-  .attr("class", "tooltip")
-  .style("opacity", 0);
 var insightLocal = "insight.json"
 var shortposLocal = "curpos.json"
 var insightURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/"
