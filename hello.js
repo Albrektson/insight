@@ -41,7 +41,7 @@ var yLinearScale = d3.scaleLinear()
 var yScale = yLinearScale;
 
 /*
-d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limit=10").then(function(data){
+d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/?limit=10").then(function(data){
   console.log(data)
 })
 */
@@ -51,12 +51,12 @@ var tooltip = d3.select("body").append("div")
   .style("opacity", 0);
 
 //draw initial/default graph
-update("ncc-pdmr.csv", "curpos.json")
+update("insight.json", "curpos.json")
 
 //load data and draw a graph
 function update(insightSource, shortSource){
   Promise.all([
-    d3.csv(insightSource),
+    d3.json(insightSource),
     d3.json(shortSource)
   ]).then(function(data){
     var trades = data[0]
@@ -65,8 +65,8 @@ function update(insightSource, shortSource){
     //set scaling domains
     xScale.domain(trades.map(function (d, i) { return i }));
     yScale.domain(d3.extent(trades, function(d) {
-      var val = +d.Volume
-      if (d.Trade == "Avyttring") {
+      var val = +d.volume
+      if (d.trade == "Avyttring") {
         return -val
       } else {
         return val
@@ -88,7 +88,7 @@ function update(insightSource, shortSource){
     bars.enter().append("rect")
       .attr("class", function(d) {
         var type;
-        if (d.Trade == "Avyttring") {
+        if (d.trade == "Avyttring") {
           type = "negative"
         } else {
           type = "positive"
@@ -99,15 +99,15 @@ function update(insightSource, shortSource){
         return xScale(i);
       })
       .attr("y", function(d){
-        if (d.Trade == "Avyttring") {
+        if (d.trade == "Avyttring") {
           return yScale(0)
         } else {
-          return (yScale(+d["Volume"]))
+          return (yScale(+d.volume))
         }
       })
       .attr("width", xScale.bandwidth())
       .attr("height", function(d) {
-        return (yScale(0) - yScale(+d["Volume"]))
+        return (yScale(0) - yScale(+d.volume))
       })
 
     shorts.enter().append("circle")
@@ -164,13 +164,13 @@ function update(insightSource, shortSource){
         .attr("class", "axis-title")
         .attr("text-anchor", "middle")
         .attr("transform", "translate(" + (width * (7/8)) + "," + (height-(margin.bottom/2)) +")")
-        .text("X AXIS")
+        .text("X AXIS LABEL")
       d3.select("#canvas1").append("text")
         .attr("id", "y-axis-title")
         .attr("class", "axis-title")
         .attr("text-anchor", "middle")
         .attr("transform", "translate(" + (margin.left / 2) + "," + (graphHeight/2 + margin.top) +"), rotate(-90)")
-      .text("Y AXIS")
+      .text("Y AXIS LABEL")
       d3.select("#canvas2").append("text")
         .attr("id", "short-axis-title")
         .attr("class", "axis-title")
