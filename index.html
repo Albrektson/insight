@@ -2,6 +2,19 @@
 <html lang="en">
 
 	<style>
+		body {
+			font-family: Arial;
+			padding: 10px;
+			background: #121235;
+			color: #fafafa;
+		}
+
+		.axis-title{
+			font-size: 14px;
+			fill: #fafafa;
+			color: #fafafa;
+		}
+
 		#canvas {
 			border: 1px solid;
 		}
@@ -40,9 +53,14 @@
 	</head>
 
 	<body>
+		<div class="d3">
+			<div class="tradeInfo" id="tradeDiv"> </div>
+			<div class="shortInfo" id="shortDiv"> </div>
+
 		<script src="https://d3js.org/d3.v5.min.js"></script>
 		<script src="hello.js"></script>
 		<script>
+			/*
 			//another hack
 			function toggleShortVis(){
 				var s = document.getElementsByClassName("bar-short");
@@ -54,7 +72,9 @@
 					s[i].style.visibility = outcome;
 				}
 			};
+			<button onclick="toggleShortVis()">Toggle Short Sales</button>
+			*/
 		</script>
-		 <button onclick="toggleShortVis()">Toggle Short Sales</button>
+
 	</body>
 </html>

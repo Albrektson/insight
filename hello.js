@@ -1,21 +1,28 @@
 var width = 800,
     height = 300;
-    barOffset = 3;
+var subfield = height / 8;
 
-var margin = {top: 20, right: 20, bottom: 20, left: 40},
+var margin = {top: 20, right: 20, bottom: 25, left: 30},
     graphWidth = width - margin.left - margin.right,
     graphHeight = height - margin.top - margin.bottom;
 
-//create svg canvas
-var svg = d3.select("body").append("svg")
+//create svg canvases
+var svg = d3.select("#tradeDiv").append("svg")
   .attr("width", width)
   .attr("height", height)
   .attr("id", "canvas");
+var svg2 = d3.select("#shortDiv").append("svg")
+  .attr("width", width)
+  .attr("height", subfield)
+  .attr("id", "canvas");
 
-//create actual graph surface
+//create actual graph surfaces
 var g = svg.append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
     .attr("id", "graph");
+var g2 = svg2.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+    .attr("id", "shortGraph");
 
 //define X axis scale
 var xScale = d3.scaleBand()
@@ -66,7 +73,7 @@ function update(){
         .attr("id", "trades")
         .selectAll("rect")
         .data(trades)
-    var shorts = d3.select("#graph")
+    var shorts = d3.select("#shortGraph")
       .append("g")
         .attr("id", "shorts")
         .selectAll("circle")
@@ -102,8 +109,8 @@ function update(){
       .attr("cx", function(d, i){
         return (xScale(i) + (xScale.bandwidth() / 2))
       })
-      .attr("cy", function(d, i) {
-        return yScale(0);
+      .attr("cy", function() {
+        return 0
       })
       .attr("r", xScale.bandwidth() / 3)
       .attr("opacity", 1);
@@ -126,5 +133,19 @@ function update(){
         .attr("class", "x-axis")
         .attr("transform", "translate(" + 0 + "," + yScale(0) + ")")
         .call(xAxisCall)
+
+      //axis labels
+      d3.select("#canvas").append("text")
+        .attr("id", "x-axis-title")
+        .attr("class", "axis-title")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + (width * (7/8)) + "," + (height-(margin.bottom/2)) +")")
+        .text("X AXIS")
+      d3.select("#canvas").append("text")
+        .attr("id", "y-axis-title")
+        .attr("class", "axis-title")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + (margin.left / 2) + "," + (graphHeight/2 + margin.top) +"), rotate(-90)")
+      .text("Y AXIS")
   });
 }
