@@ -44,6 +44,10 @@ d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/?limi
 })
 */
 
+var tooltip = d3.select("body").append("div")
+  .attr("class", "tooltip")
+  .style("opacity", 0);
+
 //draw initial/default graph
 update()
 
@@ -113,7 +117,25 @@ function update(){
         return 0
       })
       .attr("r", xScale.bandwidth() / 3)
-      .attr("opacity", 1);
+      .attr("opacity", 1)
+      .on("mouseover", function(d) {
+        var value = d.position_holder + ": " + d.position_in_percent + "%"
+        var date = "Aquired: " + d.position_date
+        var numLines = 2
+        tooltip.html(value + "<br/>" + date)
+          .style("width", (value.length * 8) + "px")
+          .style("height", (numLines * 14) + "px")
+          .style("left", (d3.event.pageX) + "px")
+          .style("top", (d3.event.pageY - 28) + "px");
+        tooltip.transition()
+          .duration(200)
+          .style("opacity", .9);
+        })
+    .on("mouseout", function(d) {
+        tooltip.transition()
+            .duration(500)
+            .style("opacity", 0);
+});
 
       bars.exit().remove()
       shorts.exit().remove()
