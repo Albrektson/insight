@@ -40,24 +40,35 @@ var yLinearScale = d3.scaleLinear()
   .range([graphHeight, 0])
 var yScale = yLinearScale;
 
-/*
-d3.json("http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/?limit=10").then(function(data){
-  console.log(data)
-})
-*/
 
 var tooltip = d3.select("body").append("div")
   .attr("class", "tooltip")
   .style("opacity", 0);
+var insightLocal = "insight.json"
+var shortposLocal = "curpos.json"
+var insightURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/"
+var shortposURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/"
+
+limit = 20
+insightURL += ("?limit=" + limit)
+shortposURL += ("?limit=" + limit)
+
+var useLocalData = false
+var insightSource = insightURL
+var shortposSource = shortposURL
+if (useLocalData) {
+  insightSource = insightLocal
+  shortposSource = shortposLocal
+}
 
 //draw initial/default graph
-update("insight.json", "curpos.json")
+update(insightSource, shortposSource)
 
 //load data and draw a graph
-function update(insightSource, shortSource){
+function update(i, s){
   Promise.all([
-    d3.json(insightSource),
-    d3.json(shortSource)
+    d3.json(i),
+    d3.json(s)
   ]).then(function(data){
     var trades = data[0]
     var curpos = data[1]
