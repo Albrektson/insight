@@ -47,7 +47,7 @@ var yScale = yLinearScale;
 var insightLocal = "insight.json"
 var shortposLocal = "curpos.json"
 var insightURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/"
-var shortposURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/insync2018/"
+var shortposURL = "http://ivis.southeastasia.cloudapp.azure.com:5000/currentPosition/"
 
 limit = 20
 insightURL += ("?limit=" + limit)
