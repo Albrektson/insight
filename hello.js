@@ -10,11 +10,13 @@ var margin = {top: 20, right: 20, bottom: 25, left: 30},
 var svg = d3.select("#tradeDiv").append("svg")
   .attr("width", width)
   .attr("height", height)
-  .attr("id", "canvas");
+  .attr("class", "canvas")
+  .attr("id", "canvas1");
 var svg2 = d3.select("#shortDiv").append("svg")
   .attr("width", width)
   .attr("height", subfield)
-  .attr("id", "canvas");
+  .attr("class", "canvas")
+  .attr("id", "canvas2");
 
 //create actual graph surfaces
 var g = svg.append("g")
@@ -157,17 +159,23 @@ function update(){
         .call(xAxisCall)
 
       //axis labels
-      d3.select("#canvas").append("text")
+      d3.select("#canvas1").append("text")
         .attr("id", "x-axis-title")
         .attr("class", "axis-title")
         .attr("text-anchor", "middle")
         .attr("transform", "translate(" + (width * (7/8)) + "," + (height-(margin.bottom/2)) +")")
         .text("X AXIS")
-      d3.select("#canvas").append("text")
+      d3.select("#canvas1").append("text")
         .attr("id", "y-axis-title")
         .attr("class", "axis-title")
         .attr("text-anchor", "middle")
         .attr("transform", "translate(" + (margin.left / 2) + "," + (graphHeight/2 + margin.top) +"), rotate(-90)")
       .text("Y AXIS")
+      d3.select("#canvas2").append("text")
+        .attr("id", "short-axis-title")
+        .attr("class", "axis-title")
+        .attr("text-anchor", "middle")
+        .attr("transform", "translate(" + margin.left + "," + subfield/2 +")")
+      .text("Shorts")
   });
 }
